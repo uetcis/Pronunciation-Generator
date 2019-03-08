@@ -5,3 +5,12 @@ target 'Pronunciation Generator' do
   pod 'Moya', '~> 12.0'
   pod 'AudioKit/Core'
 end
+
+plugin 'cocoapods-keys', {
+	:project => "Pronunciation Generator",
+	:target => "Pronunciation Generator",
+	:keys => [
+	"learnersDictionaryAPIKey",
+	"collegiateDictionaryAPIKey"
+	]
+}
