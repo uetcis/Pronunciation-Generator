@@ -37,33 +37,95 @@ class ViewController: NSViewController {
 	}
 	
 	func download(word: String) {
-		provider.request(.collinsLearner(word: word)) { (result) in
-			switch result {
-			case let .success(response):
-				if response.statusCode == 200 {
-					if let mp3URL = URL.generateRandomTemporaryURL()?.appendingPathExtension("mp3"),
-						let wavURL = URL.generateRandomTemporaryURL()?.appendingPathExtension("wav") {
-						try? response.data.write(to: mp3URL)
-						let converter = AKConverter(inputURL: mp3URL, outputURL: wavURL)
-						converter.start(completionHandler: { (error) in
-							if let error = error {
-								NSLog("Convert Error: %@", error.localizedDescription)
-							} else {
-								DispatchQueue.main.async {
-									self.audioDictionary[word] = wavURL
-									if self.audioDictionary.count == self.words?.count {
-										self.combine()
-									}
-								}
-							}
-						})
+		getAudio(forWord: word) { (url) in
+			guard let url = url else {
+				return
+			}
+			self.audioDictionary[word] = url
+			if self.audioDictionary.count == self.words?.count {
+				self.combine()
+			}
+		}
+
+	}
+	
+	func getAudio(forWord word: String, callback: @escaping (URL?) -> ()) {
+		requestLearners(with: word) { (learnersResult) in
+			if let learnersResult = learnersResult,
+				let filename = learnersResult.hwi.prs?.first?.sound.audio {
+				self.requestAudio(forFilename: filename, callback: callback)
+			} else {
+				self.requestCollegiate(with: word, callback: { (collegiateResult) in
+					guard let collegiateResult = collegiateResult,
+					let filename = collegiateResult.hwi.prs?.first?.sound.audio else {
+						NSLog("Word %@ Not Found", word)
+						// Alert
+						return
 					}
-				} else {
-					// Handle
+					self.requestAudio(forFilename: filename, callback: callback)
+				})
+			}
+		}
+	}
+	
+	func requestAudio(forFilename filename: String, callback: @escaping (URL?) -> ()) {
+		provider.request(.audio(filename: filename)) { (result) in
+			switch result {
+			case .success(let response):
+				guard response.statusCode == 200 else {
+					NSLog("Failed to get audio file with code %@", response.statusCode)
+					callback(nil)
+					return
 				}
-			case let .failure(error):
-				NSLog("Failed to Download: %@", error.localizedDescription)
-				self.download(word: word)
+				do {
+					let url = URL.generateRandomTemporaryURL()!.appendingPathExtension("wav")
+					try response.data.write(to: url)
+					callback(url)
+				} catch {
+					NSLog("Failed to write audio file: %@", error.localizedDescription)
+					callback(nil)
+				}
+			case .failure(let error):
+				NSLog("Failed to get audio file: %@", error.localizedDescription)
+				callback(nil)
+			}
+		}
+	}
+	
+	func requestCollegiate(with word: String, callback: @escaping (CollegiateDictionary?) -> ()) {
+		provider.request(.collegiate(word: word)) { (result) in
+			switch result {
+			case .success(let response):
+				let data = response.data
+				do {
+					let unwrapped = try JSONDecoder().decode(CollegiateDictionary.self, from: data)
+					callback(unwrapped)
+				} catch {
+					NSLog("Failed to unwrap Collegiate: %@", error.localizedDescription)
+					callback(nil)
+				}
+			case .failure(let error):
+				NSLog("Failed to request Collegiate: %@", error.localizedDescription)
+				callback(nil)
+			}
+		}
+	}
+	
+	func requestLearners(with word: String, callback: @escaping (LearnersDictionary?) -> ()) {
+		provider.request(.learners(word: word)) { (result) in
+			switch result {
+			case .success(let response):
+				let data = response.data
+				do {
+					let unwrapped = try JSONDecoder().decode(LearnersDictionary.self, from: data)
+					callback(unwrapped)
+				} catch {
+					NSLog("Failed to unwrap Learners: %@", error.localizedDescription)
+					callback(nil)
+				}
+			case .failure(let error):
+				NSLog("Failed to request Learners: %@", error.localizedDescription)
+				callback(nil)
 			}
 		}
 	}

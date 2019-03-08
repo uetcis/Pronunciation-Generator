@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		70167DA52232BAA90069F016 /* CollegiateDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70167DA42232BAA90069F016 /* CollegiateDictionary.swift */; };
+		70167DA72232BC830069F016 /* Learner'sDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70167DA62232BC830069F016 /* Learner'sDictionary.swift */; };
 		705A9A412232A1D000A31C4D /* blank.wav in Resources */ = {isa = PBXBuildFile; fileRef = 705A9A402232A1CF00A31C4D /* blank.wav */; };
 		7063B7292229648B00D0043D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7063B7282229648B00D0043D /* AppDelegate.swift */; };
 		7063B72B2229648B00D0043D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7063B72A2229648B00D0043D /* ViewController.swift */; };
@@ -21,6 +23,8 @@
 /* Begin PBXFileReference section */
 		2F6EFD0A462642B7833AB44D /* Pods-Pronunciation Generator.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pronunciation Generator.release.xcconfig"; path = "Pods/Target Support Files/Pods-Pronunciation Generator/Pods-Pronunciation Generator.release.xcconfig"; sourceTree = "<group>"; };
 		3C7DA522A418D25F9FEA0A7C /* Pods_Pronunciation_Generator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pronunciation_Generator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		70167DA42232BAA90069F016 /* CollegiateDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollegiateDictionary.swift; sourceTree = "<group>"; };
+		70167DA62232BC830069F016 /* Learner'sDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Learner'sDictionary.swift"; sourceTree = "<group>"; };
 		705A9A402232A1CF00A31C4D /* blank.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = blank.wav; path = ../../../Downloads/blank.wav; sourceTree = "<group>"; };
 		7063B7252229648B00D0043D /* Pronunciation Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pronunciation Generator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7063B7282229648B00D0043D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +83,8 @@
 			children = (
 				709AE9C4222978AE0072A2F9 /* Pronunciation Generator.entitlements */,
 				7063B7282229648B00D0043D /* AppDelegate.swift */,
+				70167DA42232BAA90069F016 /* CollegiateDictionary.swift */,
+				70167DA62232BC830069F016 /* Learner'sDictionary.swift */,
 				7063B73A222970ED00D0043D /* Network.swift */,
 				705A9A402232A1CF00A31C4D /* blank.wav */,
 				709AE9C52229FB130072A2F9 /* URL+Temporary.swift */,
@@ -227,10 +233,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70167DA72232BC830069F016 /* Learner'sDictionary.swift in Sources */,
 				7063B73922296BEC00D0043D /* Audio.swift in Sources */,
 				7063B72B2229648B00D0043D /* ViewController.swift in Sources */,
 				7063B73B222970ED00D0043D /* Network.swift in Sources */,
 				709AE9C62229FB130072A2F9 /* URL+Temporary.swift in Sources */,
+				70167DA52232BAA90069F016 /* CollegiateDictionary.swift in Sources */,
 				7063B7292229648B00D0043D /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

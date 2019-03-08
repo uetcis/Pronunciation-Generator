@@ -7,25 +7,40 @@
 //
 
 import Moya
+import Keys
 
-enum CollinsPronunciationAudio {
-	case collinsLearner(word: String)
+private let keys = PronunciationGeneratorKeys()
+
+enum WebsterDictionary {
+	case collegiate(word: String)
+	case learners(word: String)
+	case audio(filename: String)
 }
 
-extension CollinsPronunciationAudio: TargetType {
+extension WebsterDictionary: TargetType {
 	
 	var baseURL: URL {
-		return URL(string: "https://www.collinsdictionary.com/")!
+		switch self {
+		case .audio(filename: _):
+			return URL(string: "https://media.merriam-webster.com/")!
+		default:
+			return URL(string: "https://www.dictionaryapi.com/")!
+		}
 	}
 	
 	var path: String {
 		switch self {
-		case let .collinsLearner(word):
-			return "us/sounds/e/en_/en_us/en_us_\(word).mp3"
+		case .collegiate(let word):
+			return "api/v3/references/collegiate/json/\(word)?key=\(keys.collegiateDictionaryAPIKey)"
+		case .learners(let word):
+			return "api/v3/references/learners/json/\(word)?key=\(keys.learnersDictionaryAPIKey)"
+		case .audio(let filename):
+			let firstLetter = filename.first
+			return "soundc11/\(firstLetter ?? "a")/\(filename).wav"
 		}
 	}
 	
-	var method: Method {
+	var method: Moya.Method {
 		return .get
 	}
 	
@@ -44,4 +59,4 @@ extension CollinsPronunciationAudio: TargetType {
 	
 }
 
-let provider = MoyaProvider<CollinsPronunciationAudio>()
+let provider = MoyaProvider<WebsterDictionary>()
