@@ -144,17 +144,20 @@ class ViewController: NSViewController {
 				compositionAudioTrack?.append(url: singleURL)
 				self.finished += [word]
 				if self.finished.count < self.words.count {
-					compositionAudioTrack?.appendBlank()
+					compositionAudioTrack?.appendBlank(for: blankTime)
 				}
 			}
 		}
-		let export = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetPassthrough)!
-		export.outputFileType = .wav
+		
+		// See https://stackoverflow.com/questions/16276322/exporting-wav-files-using-avassetexportsession/16939699#16939699
+		let export = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetAppleM4A)!
+		export.outputFileType = .m4a
+		
 		let panel = NSSavePanel()
 		panel.directoryURL = FileManager.default.homeDirectoryForCurrentUser
 		let formatter = DateFormatter()
 		formatter.dateStyle = .short
-		panel.nameFieldStringValue = "\(formatter.string(from: Date())).wav"
+		panel.nameFieldStringValue = "\(formatter.string(from: Date())).m4a"
 		panel.beginSheetModal(for: view.window!) { (result) in
 			if result == .OK,
 				let url = panel.url {

@@ -14,9 +14,9 @@ extension AVMutableCompositionTrack {
 	func append(url: URL, scale: Int = 1) {
 		for _ in 1...scale {
 			let newAsset = AVURLAsset(url: url)
-			let range = CMTimeRangeMake(start: .zero, duration: newAsset.duration)
+			let range = CMTimeRange(start: .zero, duration: newAsset.duration)
 			let end = timeRange.end
-			if let track = newAsset.tracks(withMediaType: AVMediaType.audio).first {
+			if let track = newAsset.tracks(withMediaType: .audio).first {
 				try! insertTimeRange(range, of: track, at: end)
 			}
 		}
