@@ -1,5 +1,5 @@
 //
-//  Learner'sDictionary.swift
+//  LearnersDictionary.swift
 //  Pronunciation Generator
 //
 //  Created by CaptainYukinoshitaHachiman on 2019/3/8.
@@ -11,8 +11,6 @@ struct LearnersDictionary: Codable {
 		struct Prs: Codable {
 			struct Sound: Codable {
 				let audio: String
-				let ref: String
-				let stat: String
 			}
 			let sound: Sound
 		}

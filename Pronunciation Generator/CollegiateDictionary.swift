@@ -11,8 +11,6 @@ struct CollegiateDictionary: Codable {
 		struct Prs: Codable {
 			struct Sound: Codable {
 				let audio: String
-				let ref: String
-				let stat: String
 			}
 			let sound: Sound
 		}

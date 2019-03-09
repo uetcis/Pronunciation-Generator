@@ -9,7 +9,7 @@
 import Moya
 import Keys
 
-private let keys = PronunciationGeneratorKeys()
+fileprivate let keys = PronunciationGeneratorKeys()
 
 enum WebsterDictionary {
 	case collegiate(word: String)
@@ -31,12 +31,12 @@ extension WebsterDictionary: TargetType {
 	var path: String {
 		switch self {
 		case .collegiate(let word):
-			return "api/v3/references/collegiate/json/\(word)?key=\(keys.collegiateDictionaryAPIKey)"
+			return "api/v3/references/collegiate/json/\(word.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? word)"
 		case .learners(let word):
-			return "api/v3/references/learners/json/\(word)?key=\(keys.learnersDictionaryAPIKey)"
+			return "api/v3/references/learners/json/\(word.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? word)"
 		case .audio(let filename):
 			let firstLetter = filename.first
-			return "soundc11/\(firstLetter ?? "a")/\(filename).wav"
+			return "soundc11/\(firstLetter ?? "a")/\(filename.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? filename).wav"
 		}
 	}
 	
@@ -49,7 +49,14 @@ extension WebsterDictionary: TargetType {
 	}
 	
 	var task: Task {
-		return Task.requestPlain
+		switch self {
+		case .collegiate:
+			return .requestParameters(parameters: ["key":keys.collegiateDictionaryAPIKey], encoding: URLEncoding.queryString)
+		case .learners:
+			return .requestParameters(parameters: ["key":keys.learnersDictionaryAPIKey], encoding: URLEncoding.queryString)
+		case .audio:
+			return .requestPlain
+		}
 	}
 	
 	var headers: [String : String]? {
