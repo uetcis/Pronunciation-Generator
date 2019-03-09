@@ -14,6 +14,21 @@ class ViewController: NSViewController {
 	
 	@IBOutlet weak var textView: NSTextView!
 	
+	@IBOutlet weak var downloadButton: NSButton!
+	
+	@IBOutlet weak var blankTimeField: NSTextField!
+	
+	var blankTime: Int {
+		return Int(blankTimeField.stringValue) ?? 3
+	}
+	
+	var isEditable = true {
+		didSet {
+			downloadButton.isEnabled = isEditable
+			blankTimeField.isEditable = isEditable
+		}
+	}
+	
 	var words = [String]()
 	
 	var audioDictionary = [String:URL]()
@@ -23,13 +38,7 @@ class ViewController: NSViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 	}
-
-	override var representedObject: Any? {
-		didSet {
-		// Update the view, if already loaded.
-		}
-	}
-
+	
 	@IBAction func donwloadAndCombine(_ sender: Any) {
 		audioDictionary = [:]
 		finished = []
@@ -43,6 +52,7 @@ class ViewController: NSViewController {
 	}
 	
 	func download(word: String) {
+		isEditable = false
 		getAudio(forWord: word) { (url) in
 			guard let url = url else {
 				return
@@ -50,6 +60,7 @@ class ViewController: NSViewController {
 			self.audioDictionary[word] = url
 			if self.audioDictionary.count == self.words.count {
 				self.combine()
+				self.isEditable = true
 			}
 		}
 
@@ -63,7 +74,10 @@ class ViewController: NSViewController {
 				self.requestCollegiate(with: word, callback: { (collegiateResult) in
 					guard let filename = collegiateResult else {
 						NSLog("Word %@ Not Found", word)
-						// Alert
+						let alert = NSAlert()
+						alert.messageText = "Word \"\(word)\" not found, please try another one"
+						alert.beginSheetModal(for: self.view.window!, completionHandler: nil)
+						self.isEditable = true
 						return
 					}
 					self.requestAudio(forFilename: filename, callback: callback)
@@ -169,13 +183,16 @@ class ViewController: NSViewController {
 						try manager.removeItem(atPath: url.path)
 					} catch {
 						NSLog("Failed to remove: %@", error.localizedDescription)
+						self.alert(for: error)
 					}
 				}
 				
 				DispatchQueue.main.async {
 					export.exportAsynchronously {
-						if let errorInfo = export.error?.localizedDescription {
-							NSLog("Failed to combine: %@", errorInfo)
+						if let error = export.error {
+							NSLog("Failed to combine: %@", error.localizedDescription)
+							self.alert(for: error)
+							
 						} else {
 							print("Done at \(url.absoluteString)")
 						}
@@ -184,6 +201,11 @@ class ViewController: NSViewController {
 				}
 			}
 		}
+	}
+	
+	func alert(for error: Error) {
+		let alert = NSAlert(error: error)
+		alert.beginSheetModal(for: view.window!, completionHandler: nil)
 	}
 	
 }
