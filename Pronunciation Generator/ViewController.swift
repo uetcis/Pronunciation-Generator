@@ -29,7 +29,13 @@ class ViewController: NSViewController {
 		}
 	}
 	
-	var words = [String]()
+	var words = [String]() {
+		didSet {
+			wordsWithoutDuplicates = words.removingDuplicates()
+		}
+	}
+	
+	var wordsWithoutDuplicates: [String]!
 	
 	var audioDictionary = [String:URL]()
 	
@@ -58,7 +64,7 @@ class ViewController: NSViewController {
 				return
 			}
 			self.audioDictionary[word] = url
-			if self.audioDictionary.count == self.words.count {
+			if self.audioDictionary.count == self.wordsWithoutDuplicates.count {
 				self.combine()
 				self.isEditable = true
 			}
