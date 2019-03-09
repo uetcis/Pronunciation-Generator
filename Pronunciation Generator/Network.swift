@@ -35,8 +35,22 @@ extension WebsterDictionary: TargetType {
 		case .learners(let word):
 			return "api/v3/references/learners/json/\(word.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? word)"
 		case .audio(let filename):
-			let firstLetter = filename.first
-			return "soundc11/\(firstLetter ?? "a")/\(filename.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? filename).wav"
+			let firstCharacter = filename.first!
+			let subdirectory: String
+			
+			if filename.starts(with: "gg") {
+				subdirectory = "gg"
+			} else if filename.starts(with: "bix") {
+				subdirectory = "bix"
+			} else if filename.starts(with: "_") {
+				subdirectory = "number"
+			} else if let _ = Int(String(firstCharacter)) {
+				subdirectory = "number"
+			} else {
+				subdirectory = String(firstCharacter)
+			}
+			
+			return "soundc11/\(subdirectory)/\(filename.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? filename).wav"
 		}
 	}
 	
