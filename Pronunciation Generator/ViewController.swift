@@ -177,7 +177,13 @@ class ViewController: NSViewController {
 				let url = panel.url {
 				export.outputURL = url
 				
-				let manager = FileManager(authorization: .init())
+				let manager: FileManager
+				if #available(OSX 10.14, *) {
+					manager = FileManager(authorization: .init())
+				} else {
+					manager = FileManager()
+				}
+				
 				if manager.fileExists(atPath: url.path) {
 					do {
 						try manager.removeItem(atPath: url.path)
