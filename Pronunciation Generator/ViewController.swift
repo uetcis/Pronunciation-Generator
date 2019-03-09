@@ -8,6 +8,7 @@
 
 import Cocoa
 import AVFoundation
+import SwiftyJSON
 
 class ViewController: NSViewController {
 	
@@ -56,13 +57,11 @@ class ViewController: NSViewController {
 	
 	func getAudio(forWord word: String, callback: @escaping (URL?) -> ()) {
 		requestLearners(with: word) { (learnersResult) in
-			if let learnersResult = learnersResult,
-				let filename = learnersResult.hwi.prs?.first?.sound.audio {
+			if let filename = learnersResult {
 				self.requestAudio(forFilename: filename, callback: callback)
 			} else {
 				self.requestCollegiate(with: word, callback: { (collegiateResult) in
-					guard let collegiateResult = collegiateResult,
-					let filename = collegiateResult.hwi.prs?.first?.sound.audio else {
+					guard let filename = collegiateResult else {
 						NSLog("Word %@ Not Found", word)
 						// Alert
 						return
@@ -97,14 +96,15 @@ class ViewController: NSViewController {
 		}
 	}
 	
-	func requestCollegiate(with word: String, callback: @escaping (CollegiateDictionary?) -> ()) {
+	func requestCollegiate(with word: String, callback: @escaping (String?) -> ()) {
 		provider.request(.collegiate(word: word)) { (result) in
 			switch result {
 			case .success(let response):
-				let data = response.data
 				do {
-					let unwrapped = try JSONDecoder().decode([CollegiateDictionary].self, from: data)
-					callback(unwrapped.first)
+					let data = response.data
+					let json = try JSON(data: data)
+					let filename = json[0]["hwi"]["prs"][0]["sound"]["audio"].string
+					callback(filename)
 				} catch {
 					NSLog("Failed to unwrap Collegiate: %@", error.localizedDescription)
 					callback(nil)
@@ -116,14 +116,15 @@ class ViewController: NSViewController {
 		}
 	}
 	
-	func requestLearners(with word: String, callback: @escaping (LearnersDictionary?) -> ()) {
+	func requestLearners(with word: String, callback: @escaping (String?) -> ()) {
 		provider.request(.learners(word: word)) { (result) in
 			switch result {
 			case .success(let response):
-				let data = response.data
 				do {
-					let unwrapped = try JSONDecoder().decode([LearnersDictionary].self, from: data)
-					callback(unwrapped.first)
+					let data = response.data
+					let json = try JSON(data: data)
+					let filename = json[0]["hwi"]["prs"][0]["sound"]["audio"].string
+					callback(filename)
 				} catch {
 					NSLog("Failed to unwrap Learners: %@", error.localizedDescription)
 					callback(nil)
