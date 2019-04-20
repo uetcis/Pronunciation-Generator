@@ -1,0 +1,23 @@
+os: osx
+osx_image: xcode10.2
+language: swift
+before_install:
+- gem install cocoapods-keys
+- pod keys set learnersDictionaryAPIKey $learnersDictionaryAPIKey
+- pod keys set collegiateDictionaryAPIKey $collegiateDictionaryAPIKey
+- pod install
+install:
+- xcodebuild archive -workspace 'Pronunciation Generator.xcworkspace' -scheme 'Pronunciation
+  Generator' -configuration Release -archivePath PG.xcarchive CODE_SIGN_IDENTITY=""
+  CODE_SIGNING_REQUIRED=NO
+- cp -r PG.xcarchive/Products/Applications/Pronunciation\ Generator.app ./Pronunciation\
+  Generator.app
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: x1Z1mCEEDHSGPlTkkWSxs+f7zbeRYh5bInTiCvMLDFZKLwsBHNC6E9xN6miKEXSoTt+9JLH2aheSdZ9Oru8vz6v4hycLsmIbSn2ViZLCygrECzeJpqPaTbROMdbLJViFWuNregbml8Dqt8dKqIVntBuThgqktqhQZTFx5buvTgRif5+mpRq51hhIHpbgK+xQDicwXW65xiAlAta4i86GjtxGi9/i77nb2A23P6rS7K5Vtp4ywemGjCcE0qMp8/xiRLJ64cbuSvZR6qizp4xM6PLLToJ0onJkisEclUDrAYxSjCcwBWcRpWeQr1f+7ct39+VGEmWPsatE9aFDoCVAy/yrT1eBdj/piGniM2G+5wYBkUR5GxmTM8se8mtjok+ZBykDKwXs+csd30Pkrgfw236Iq1HQWCYRq7PKMY5tI0qiTqWfn7Rs0QQGnzfwQz4wZ8HDJCKY47+mnQqwHbemgtH5i6bofeAt09R7ebRHe0XiJ3mYwCsYsmLjZCoREtDGeovZBD2/dgvrWwL/+0QkvYlOSesIJN6rRqrnyPlb1678I+Ng++NmWQClBWxNwPUywAlntggGah5NmGfbcjsoH9oIQGsuLFOcqGbjkWnDxi40gp5FNFn0kMpIvADjJ4R1IUgQye42HmXV7XszDPGgo5Jylev33L2zkgrSk+GShHI=
+  file: './Pronunciation\ Generator.app'
+  on:
+    repo: CaptainYukinoshitaHachiman/Pronunciation-Generator
+    tags: true
